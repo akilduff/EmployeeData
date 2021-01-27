@@ -1,169 +1,79 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import employee_data from './employeeData.js'
 
 class App extends React.Component {
-  constructor() {
-    super ();
+  constructor(props) {
+    super (props);
     this.state = {
-      count: {
-        jpeg: 0,
-        png: 0,
-        javascript: 0,
-        pdf: 0,
-        other: 0
-      }
-
+      employees: employee_data,
+      search: '',
+      employeesToRender: employee_data
     };
 
-    this.main = this.main.bind(this);
+    this.handleSubmitSearch = this.handleSubmitSearch.bind(this);
+    this.handleSearch= this.handleSearch.bind(this);
   }
 
-  componentDidMount() {
-    axios.get('/uploader')
-      .then((response) => {
-        this.setState({
-          count: response.data
-        })
-      })
-      .then(() => {
-        this.main()
-      })
+  // componentDidMount() {
+  //   axios.get('/uploader')
+  //     .then((response) => {
+  //       this.setState({
+  //         count: response.data
+  //       })
+  //     })
+  //     .then(() => {
+  //       this.main()
+  //     })
+  // }
+
+  handleSearch(event) {
+    this.setState({
+      search: event.target.value
+    })
   }
 
-  main() {
-    console.log('Main is firing')
-    const canvas = document.getElementById('c');
-    const renderer = new THREE.WebGLRenderer({canvas});
-    const fov = 75;
-    const aspect = 2;  // the canvas default
-    const near = 0.1;
-    const far = 5;
-    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 3;
-    const scene = new THREE.Scene();
-    {
-      const color = 0xFFFFFF;
-      const intensity = 1;
-      const light = new THREE.DirectionalLight(color, intensity);
-      light.position.set(-1, 2, 4);
-      scene.add(light);
-    }
-
-    function makeCube(count, x) {
-      if (count === 0) {
-        var selectedColor = 0x6b6b6b;
-        var boxDim = 0.1;
-      } else {
-        var selectedColor = 0x44aa88;
-        var boxDim = count/10;
+  handleSubmitSearch(event) {
+    event.preventDefault()
+    var matchingEmployees = [];
+    for (var index of this.state.employeesToRender) {
+      var inspectingName = index.name
+      var stringToCheck = this.state.search
+      if (index.name.includes(this.state.search)) {
+        matchingEmployees.push(index)
       }
-      const geometry = new THREE.BoxGeometry(boxDim, boxDim, boxDim);
-      const material = new THREE.MeshPhongMaterial({color: selectedColor});  // greenish blue
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
-      cube.position.x = x;
-      return cube;
     }
-
-    function makeTetra(count, x) {
-      if (count === 0) {
-        var selectedColor = 0x6b6b6b;
-        var radius = 0.1;
-      } else {
-        var selectedColor = 0xffff00;
-        var radius = count/10;
-      }
-      const geometry = new THREE.TetrahedronGeometry(radius);
-      const material = new THREE.MeshPhongMaterial({color: selectedColor});  // greenish blue
-      const tetra = new THREE.Mesh(geometry, material);
-      scene.add(tetra);
-      tetra.position.x = x;
-      return tetra;
-    }
-
-    function makeDode(count, x) {
-      if (count === 0) {
-        var selectedColor = 0x6b6b6b;
-        var radius = 0.1;
-      } else {
-        var selectedColor = 0xff0000;
-        var radius = count/10;
-      }
-      const geometry = new THREE.DodecahedronGeometry(radius);
-      const material = new THREE.MeshPhongMaterial({color: selectedColor});  // greenish blue
-      const dode = new THREE.Mesh(geometry, material);
-      scene.add(dode);
-      dode.position.x = x;
-      return dode;
-    }
-
-    function makeCylinder(count, x) {
-      if (count === 0) {
-        var selectedColor = 0x6b6b6b;
-        var radius = 0.1;
-      } else {
-        var selectedColor = 0x00fff9;
-        var radius = count/10;
-      }
-      const geometry = new THREE.CylinderGeometry(radius, radius, radius*2, radius*20);
-      const material = new THREE.MeshPhongMaterial({color: selectedColor});  // greenish blue
-      const cylinder = new THREE.Mesh(geometry, material);
-      scene.add(cylinder);
-      cylinder.position.x = x;
-      return cylinder;
-    }
-
-    function makePan(count, x) {
-      if (count === 0) {
-        var selectedColor = 0x6b6b6b;
-        var radius = 0.1;
-      } else {
-        var selectedColor = 0xffa500;
-        var radius = count/10;
-      }
-      const geometry = new THREE.ConeGeometry(radius, radius*2, radius*2);
-      const material = new THREE.MeshPhongMaterial({color: selectedColor});  // greenish blue
-      const pan = new THREE.Mesh(geometry, material);
-      scene.add(pan);
-      pan.position.x = x;
-      return pan;
-    }
-
-    const shapes = [
-      makeCube(this.state.count.jpeg, -4),
-      makeTetra(this.state.count.png, -2),
-      makeDode(this.state.count.javascript, 0),
-      makeCylinder(this.state.count.pdf, 2),
-      makePan(this.state.count.other, 4)
-    ]
-
-    function render(time) {
-      time *= 0.0007;
-      shapes.forEach((shape) => {
-        const speed = 1;
-        const rot = time * speed;
-        shape.rotation.x = rot;
-        shape.rotation.y = rot;
+    if (matchingEmployees.length === 0) {
+      alert('That employee isn\'t in our library')
+    } else {
+      this.setState({
+        employeesToRender: matchingEmployees
       })
-      renderer.render(scene, camera);
-      requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
   }
 
   render() {
     return (
       <div>
-        <TitleBlock/>
-          <FileStats
-            main={this.main}
-            count={this.state.count}
-            addCount={this.setState}
-          />
-        <FileVisual>
-          <canvas id="c"></canvas>
-        </FileVisual>
+        <h1>Employee Data</h1>
+        <nav>
+          <form onSubmit={this.handleSubmitSearch}>
+            <label>
+              <input type="text" value={this.state.search} onChange={this.handleSearch} />
+            </label>
+            <input type="submit" value="Search Employees" />
+          </form>
+        </nav>
+        <div>
+          <div>{this.state.employeesToRender.map((employee) => (
+            <div>
+              <h5>{employee.name}</h5>
+              <h5>{employee.department}</h5>
+              <h5>{employee.age}</h5>
+            </div>
+          ))}</div>
+        </div>
       </div>
     );
   }
