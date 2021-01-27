@@ -14,19 +14,9 @@ class App extends React.Component {
 
     this.handleSubmitSearch = this.handleSubmitSearch.bind(this);
     this.handleSearch= this.handleSearch.bind(this);
-  }
+    this.handleSubmitDept = this.handleSubmitDept.bind(this);
 
-  // componentDidMount() {
-  //   axios.get('/uploader')
-  //     .then((response) => {
-  //       this.setState({
-  //         count: response.data
-  //       })
-  //     })
-  //     .then(() => {
-  //       this.main()
-  //     })
-  // }
+  }
 
   handleSearch(event) {
     this.setState({
@@ -38,8 +28,6 @@ class App extends React.Component {
     event.preventDefault()
     var matchingEmployees = [];
     for (var index of this.state.employeesToRender) {
-      var inspectingName = index.name
-      var stringToCheck = this.state.search
       if (index.name.includes(this.state.search)) {
         matchingEmployees.push(index)
       }
@@ -53,6 +41,28 @@ class App extends React.Component {
     }
   }
 
+  handleSubmitDept(event) {
+    event.preventDefault();
+    let deptSearch = event.target.value;
+    var matchingEmployees = [];
+    for (var index of this.state.employeesToRender) {
+      var inspectingName = index.name
+      var stringToCheck = this.state.search
+      if (index.department.includes(deptSearch)) {
+        matchingEmployees.push(index)
+      }
+    }
+    if (matchingEmployees.length === 0) {
+      alert('That employee isn\'t in our library')
+    } else {
+      this.setState({
+        employeesToRender: matchingEmployees
+      })
+    }
+  }
+
+
+
   render() {
     return (
       <div>
@@ -64,6 +74,11 @@ class App extends React.Component {
             </label>
             <input type="submit" value="Search Employees" />
           </form>
+        </nav>
+        <nav>
+          <button onClick={this.handleSubmitDept} value="Sports"> Sports Dept </button>
+          <button onClick={this.handleSubmitDept} value="Film"> Film Dept </button>
+          <button onClick={this.handleSubmitDept} value="Music"> Music Dept </button>
         </nav>
         <div>
           <div>{this.state.employeesToRender.map((employee) => (
