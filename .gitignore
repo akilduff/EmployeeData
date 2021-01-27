@@ -1,0 +1,25 @@
+# Dependency directories
+node_modules/
+
+# Bundled distribution
+/dist/bundle.js
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Database
+/database/archives/*
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
