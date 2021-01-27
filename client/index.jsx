@@ -8,27 +8,55 @@ class App extends React.Component {
     super (props);
     this.state = {
       employees: employee_data,
-      search: '',
+      searchName: '',
+      searchAge: '',
       employeesToRender: employee_data
     };
 
-    this.handleSubmitSearch = this.handleSubmitSearch.bind(this);
-    this.handleSearch= this.handleSearch.bind(this);
+    this.handleSubmitSearchName = this.handleSubmitSearchName.bind(this);
+    this.handleSubmitSearchAge = this.handleSubmitSearchAge.bind(this);
+    this.handleSearchName= this.handleSearchName.bind(this);
+    this.handleSearchAge= this.handleSearchAge.bind(this);
     this.handleSubmitDept = this.handleSubmitDept.bind(this);
 
   }
 
-  handleSearch(event) {
+  handleSearchName(event) {
     this.setState({
-      search: event.target.value
+      searchName: event.target.value
     })
   }
 
-  handleSubmitSearch(event) {
+  handleSubmitSearchName(event) {
     event.preventDefault()
     var matchingEmployees = [];
     for (var index of this.state.employeesToRender) {
-      if (index.name.includes(this.state.search)) {
+      if (index.name.includes(this.state.searchName)) {
+        matchingEmployees.push(index)
+      }
+    }
+    if (matchingEmployees.length === 0) {
+      alert('That employee isn\'t in our library')
+    } else {
+      this.setState({
+        employeesToRender: matchingEmployees
+      })
+    }
+  }
+
+  handleSearchAge(event) {
+    this.setState({
+      searchAge: event.target.value
+    })
+  }
+
+  handleSubmitSearchAge(event) {
+    event.preventDefault()
+    var matchingEmployees = [];
+    for (var index of this.state.employeesToRender) {
+      console.log("index.age", index.age)
+      console.log(this.state.searchAge)
+      if (index.age === Number(this.state.searchAge)) {
         matchingEmployees.push(index)
       }
     }
@@ -68,11 +96,19 @@ class App extends React.Component {
       <div>
         <h1>Employee Data</h1>
         <nav>
-          <form onSubmit={this.handleSubmitSearch}>
+          <form onSubmit={this.handleSubmitSearchName}>
             <label>
-              <input type="text" value={this.state.search} onChange={this.handleSearch} />
+              <input type="text" value={this.state.searchName} onChange={this.handleSearchName} />
             </label>
-            <input type="submit" value="Search Employees" />
+            <input type="submit" value="Search Employee Name" />
+          </form>
+        </nav>
+        <nav>
+          <form onSubmit={this.handleSubmitSearchAge}>
+            <label>
+              <input type="text" value={this.state.searchAge} onChange={this.handleSearchAge} />
+            </label>
+            <input type="submit" value="Search Employee Age" />
           </form>
         </nav>
         <nav>
