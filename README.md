@@ -4,7 +4,7 @@ This React app is used to search and filter a static employee database by name, 
 
 ## Usage
 
-Begin typing in an employee's name to search by name. Filtering by department and age range is available in the drop down menus.
+Begin typing in an employee's name to dynamically search. Filtering by department and age range is also dynamically available in the drop down menus.
 
 ## Requirements
 
@@ -14,7 +14,7 @@ Begin typing in an employee's name to search by name. Filtering by department an
 
 From within the root directory:
 
-npm install -g webpack
-npm install
-npm run build
-npm run start
+- npm install -g webpack
+- npm install
+- npm run build
+- npm run start
