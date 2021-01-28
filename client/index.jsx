@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
+import styled from 'styled-components';
 import employee_data from './employeeData.js'
 
 class App extends React.Component {
@@ -8,87 +8,45 @@ class App extends React.Component {
     super (props);
     this.state = {
       employees: employee_data,
-      searchName: '',
-      searchAge: '',
+      name: '',
+      age: '',
+      dept: '',
       employeesToRender: employee_data
     };
 
-    this.handleSubmitSearchName = this.handleSubmitSearchName.bind(this);
-    this.handleSubmitSearchAge = this.handleSubmitSearchAge.bind(this);
-    this.handleSearchName= this.handleSearchName.bind(this);
-    this.handleSearchAge= this.handleSearchAge.bind(this);
-    this.handleSubmitDept = this.handleSubmitDept.bind(this);
-
+    this.searchTerm= this.searchTerm.bind(this);
+    this.dynamicSearch = this.dynamicSearch.bind(this);
+    this.filterSearch = this.filterSearch.bind(this);
   }
 
-  handleSearchName(event) {
+  searchTerm(event) {
     this.setState({
-      searchName: event.target.value
+      [event.target.id]: event.target.value.toLowerCase()
+    }, () => this.dynamicSearch()
+    )
+  }
+
+  dynamicSearch() {
+    event.preventDefault()
+    let filtered = this.state.employees.filter(this.filterSearch)
+    this.setState({
+      employeesToRender: filtered
     })
   }
 
-  handleSubmitSearchName(event) {
-    event.preventDefault()
-    var matchingEmployees = [];
-    for (var index of this.state.employeesToRender) {
-      if (index.name.includes(this.state.searchName)) {
-        matchingEmployees.push(index)
+  filterSearch(person) {
+    let checkName = person.name.toLowerCase();
+    let checkDept = person.department.toLowerCase();
+    let checkAge = person.age;
+    let ageRange = this.state.age.split('-')
+    if (checkName.includes(this.state.name) || this.state.name === '') {
+      if (checkDept.includes(this.state.dept) || this.state.dept === '') {
+        if ((checkAge >= ageRange[0] && checkAge <= ageRange[1]) || this.state.age === '') {
+          return true
+        }
       }
     }
-    if (matchingEmployees.length === 0) {
-      alert('That employee isn\'t in our library')
-    } else {
-      this.setState({
-        employeesToRender: matchingEmployees
-      })
-    }
   }
-
-  handleSearchAge(event) {
-    this.setState({
-      searchAge: event.target.value
-    })
-  }
-
-  handleSubmitSearchAge(event) {
-    event.preventDefault()
-    var matchingEmployees = [];
-    for (var index of this.state.employeesToRender) {
-      console.log("index.age", index.age)
-      console.log(this.state.searchAge)
-      if (index.age === Number(this.state.searchAge)) {
-        matchingEmployees.push(index)
-      }
-    }
-    if (matchingEmployees.length === 0) {
-      alert('That employee isn\'t in our library')
-    } else {
-      this.setState({
-        employeesToRender: matchingEmployees
-      })
-    }
-  }
-
-  handleSubmitDept(event) {
-    event.preventDefault();
-    let deptSearch = event.target.value;
-    var matchingEmployees = [];
-    for (var index of this.state.employeesToRender) {
-      var inspectingName = index.name
-      var stringToCheck = this.state.search
-      if (index.department.includes(deptSearch)) {
-        matchingEmployees.push(index)
-      }
-    }
-    if (matchingEmployees.length === 0) {
-      alert('That employee isn\'t in our library')
-    } else {
-      this.setState({
-        employeesToRender: matchingEmployees
-      })
-    }
-  }
-
 
 
   render() {
@@ -96,32 +54,45 @@ class App extends React.Component {
       <div>
         <h1>Employee Data</h1>
         <nav>
-          <form onSubmit={this.handleSubmitSearchName}>
-            <label>
-              <input type="text" value={this.state.searchName} onChange={this.handleSearchName} />
-            </label>
-            <input type="submit" value="Search Employee Name" />
-          </form>
+          <div>Employee Name:
+            <input
+              type='text'
+              id='name'
+              value={this.state.name}
+              onChange={this.searchTerm}
+              placeholder={'search for a name...'}
+            />
+          </div>
         </nav>
-        <nav>
-          <form onSubmit={this.handleSubmitSearchAge}>
-            <label>
-              <input type="text" value={this.state.searchAge} onChange={this.handleSearchAge} />
-            </label>
-            <input type="submit" value="Search Employee Age" />
-          </form>
-        </nav>
-        <nav>
-          <button onClick={this.handleSubmitDept} value="Sports"> Sports Dept </button>
-          <button onClick={this.handleSubmitDept} value="Film"> Film Dept </button>
-          <button onClick={this.handleSubmitDept} value="Music"> Music Dept </button>
-        </nav>
+        <br></br>
+        <label>
+          Filter By Dept:
+          <select id='dept' value={this.state.dept} onChange={this.searchTerm}>
+            <option value=''>All Depts</option>
+            <option value='Sports'>Sports</option>
+            <option value='Film'>Film</option>
+            <option value='Music'>Music</option>
+          </select>
+        </label>
+        <br></br>
+        <label>
+          Filter By Age Range:
+          <select id='age' value={this.state.age} onChange={this.searchTerm}>
+            <option value=''>All Ages</option>
+            <option value='0-20'>0 - 20 yrs</option>
+            <option value='21-30'>21 - 30 yrs</option>
+            <option value='31-40'>31 - 40 yrs</option>
+            <option value='41-50'>41 - 50 yrs</option>
+            <option value='51-Infinity'>51+ yrs</option>
+          </select>
+        </label>
         <div>
           <div>{this.state.employeesToRender.map((employee) => (
             <div>
-              <h5>{employee.name}</h5>
-              <h5>{employee.department}</h5>
-              <h5>{employee.age}</h5>
+              <h3>{employee.name}</h3>
+              <br></br>
+              <div>Department: {employee.department},  Age: {employee.age}</div>
+              <br></br>
             </div>
           ))}</div>
         </div>
