@@ -57,7 +57,7 @@ class App extends React.Component {
       <div>
         <h1>Employee Data</h1>
         <nav>
-          <div>Employee Name:
+          <div>Search Employee Name:
             <input
               type='text'
               id='name'
