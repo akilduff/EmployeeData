@@ -63,7 +63,7 @@ class App extends React.Component {
               id='name'
               value={this.state.name}
               onChange={this.searchTerm}
-              placeholder={'search for a name...'}
+              placeholder={'start typing a name...'}
             />
           </div>
         </nav>
