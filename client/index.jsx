@@ -48,8 +48,20 @@ class App extends React.Component {
     }
   }
 
-
   render() {
+
+    const EmployeeStyle = styled.div`
+      display: inline-block;
+      text-align: center;
+      justify-content: center;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      margin-right: 0.25rem;
+      margin-left: 0.25rem;
+      box-sizing: border-box;
+      border-radius: 2px 2px 2px 2px;
+    `;
+
     return (
       <div>
         <h1>Employee Data</h1>
@@ -66,7 +78,7 @@ class App extends React.Component {
         </nav>
         <br></br>
         <label>
-          Filter By Dept:
+          Filter By Department:
           <select id='dept' value={this.state.dept} onChange={this.searchTerm}>
             <option value=''>All Depts</option>
             <option value='Sports'>Sports</option>
@@ -89,9 +101,10 @@ class App extends React.Component {
         <div>
           <div>{this.state.employeesToRender.map((employee) => (
             <div>
-              <h3>{employee.name}</h3>
-              <br></br>
-              <div>Department: {employee.department},  Age: {employee.age}</div>
+              <EmployeeStyle>
+                <h3>{employee.name}</h3>
+                <div>Department: {employee.department} // Age: {employee.age}</div>
+              </EmployeeStyle>
               <br></br>
             </div>
           ))}</div>
